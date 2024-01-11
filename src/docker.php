@@ -44,7 +44,7 @@ function docker_wait_for_healthy(null|string|Stringable $container, int $timeout
 {
     if (! docker_container_is_running($container)) {
         io()->note(sprintf('Starting required container "%s"', $container));
-        docker_compose_start(
+        docker_compose_up(
             container: $container,
             detached: true,
             quiet: true
@@ -62,15 +62,30 @@ function docker_wait_for_healthy(null|string|Stringable $container, int $timeout
  * Start all docker containers
  * @param bool $detached If true, the containers will be detached from current session
  */
-function docker_compose_start(null|string|Stringable $container = null, bool $detached = false, bool $quiet = false): void
-{
-    $options = [];
-    if ($detached) {
-        $options[] = '-d';
+function docker_compose_up(
+    null|string|Stringable $container = null,
+    bool $detached = false,
+    bool $quiet = false,
+    array $options = []
+): void {
+    if (!fingerprint_exists(docker_fingerprint())) {
+        docker_compose_build();
     }
     if (null !== $container) {
         $options[] = (string) $container;
     }
+    if (! $detached) {
+        pcntl_exec(
+            capture('which docker'),
+            [
+                'compose',
+                'up',
+                ...$options
+            ]
+        );
+        return;
+    }
+
     docker_compose(
         command: [
             'up',
