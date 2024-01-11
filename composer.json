@@ -1,0 +1,19 @@
+{
+    "name": "jeckel-lab/castor-helper",
+    "description": "Collection of helpers to use with Castor",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "JeckelLab\\CastorHelper\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Julien Mercier-Rojas",
+            "email": "julien@jeckel-lab.fr"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
