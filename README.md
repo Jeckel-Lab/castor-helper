@@ -1,6 +1,8 @@
 # castor-helper
 Castor helper tools
 
+> 🚧 Project is in **Work In Progress** status 🚧
+> 
 ## Installation
 
 ```bash
@@ -8,10 +10,6 @@ composer require --dev jeckel-lab/castor-helper
 ```
 
 ## Helpers
-
-### Common
-
-- `wait_for`
 
 ### Docker
 

@@ -17,6 +17,7 @@ use function Castor\fingerprint_save;
 use function Castor\hasher;
 use function Castor\io;
 use function Castor\run;
+use function Castor\wait_for;
 
 /**
  * Watch log of all containers define in docker-compose.yml (or specified container)
@@ -50,12 +51,13 @@ function docker_wait_for_healthy(null|string|Stringable $container, int $timeout
             quiet: true
         );
     }
-    return wait_for(
+    wait_for(
         callback: static fn(): bool => capture(
                 sprintf("docker-compose ps | grep '%s' | grep '(healthy)' | wc -l", $container)
             ) === "1",
         timeout: $timeout
     );
+    return true;
 }
 
 /**
