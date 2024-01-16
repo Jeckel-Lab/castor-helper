@@ -142,6 +142,25 @@ function docker_compose_build(): void
     fingerprint_save(docker_fingerprint());
 }
 
+function docker_build(string $path, string $tag, array $buildArgs = []): void
+{
+    io()->info(sprintf('Création de l\'image docker "%s"', $tag));
+    run(
+        command: [
+            'docker',
+            'build',
+            ...array_map(
+                static fn(string $arg, string $value) => '--build-arg='. $arg. '='. $value,
+                array_keys($buildArgs),
+                array_values($buildArgs)
+            ),
+            '--tag=' . $tag,
+            $path
+        ],
+        timeout: 0
+    );
+}
+
 /**
  * Create a fingerprint based on all files required to configure docker containers
  */
