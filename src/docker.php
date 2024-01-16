@@ -7,7 +7,11 @@
 
 declare(strict_types=1);
 
+namespace docker;
+
 use Castor\Fingerprint\FileHashStrategy;
+
+use Stringable;
 
 use function Castor\capture;
 use function Castor\context;
