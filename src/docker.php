@@ -189,12 +189,12 @@ function docker_fingerprint(): string
 
 function compose_bash(string|\Stringable $container, string $shell = 'bash'): void
 {
+    $command = docker_container_is_running($container) ? ['exec'] : ['run', '--rm'];
     pcntl_exec(
         capture('which docker'),
         [
             'compose',
-            'run',
-            '--rm',
+            ...$command,
             (string) $container,
             $shell
         ]
