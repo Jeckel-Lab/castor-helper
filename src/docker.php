@@ -40,12 +40,12 @@ function docker_compose_logs(null|string|Stringable $container = null): void
     );
 }
 
-function docker_container_is_running(null|string|Stringable $container): bool
+function docker_container_is_running(string|Stringable $container): bool
 {
     return capture(sprintf('docker compose ps | grep Up | grep %s | wc -l', $container)) === '1';
 }
 
-function docker_wait_for_healthy(null|string|Stringable $container, int $timeout = 60): bool
+function docker_wait_for_healthy(string|Stringable $container, int $timeout = 60): bool
 {
     if (! docker_container_is_running($container)) {
         io()->note(sprintf('Starting required container "%s"', $container));
@@ -110,8 +110,8 @@ function docker_compose_up(
  */
 function docker_compose(
     array $command,
-    int    $timeout = 60,
-    ?bool  $quiet = null
+    int   $timeout = 60,
+    ?bool $quiet = null
 ): string
 {
     if (!fingerprint_exists(docker_fingerprint())) {
@@ -166,4 +166,31 @@ function docker_fingerprint(): string
         }
     }
     return $hasher->finish();
+}
+
+function compose_run_or_exec(string|\Stringable $container, array $command, array $options = [], int $timeout = 60): void
+{
+    if (docker_container_is_running($container)) {
+        // exec
+        docker_compose(
+            command: [
+                'exec',
+                ...$options,
+                $container,
+                ...$command
+            ],
+            timeout: $timeout
+        );
+    } else {
+        // run
+        docker_compose(
+            command: [
+                'run',
+                ...$options,
+                $container,
+                ...$command
+            ],
+            timeout: $timeout
+        );
+    }
 }
