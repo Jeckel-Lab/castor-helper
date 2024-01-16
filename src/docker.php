@@ -110,7 +110,7 @@ function docker_compose_up(
  */
 function docker_compose(
     array $command,
-    int   $timeout = 60,
+    float $timeout = 60,
     ?bool $quiet = null
 ): string
 {
@@ -168,7 +168,7 @@ function docker_fingerprint(): string
     return $hasher->finish();
 }
 
-function compose_run_or_exec(string|\Stringable $container, array $command, array $options = [], int $timeout = 60): void
+function compose_run_or_exec(string|\Stringable $container, array $command, array $options = [], float $timeout = 60): void
 {
     if (docker_container_is_running($container)) {
         // exec
