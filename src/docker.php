@@ -42,7 +42,7 @@ function docker_compose_logs(null|string|Stringable $container = null): void
 
 function docker_container_is_running(null|string|Stringable $container): bool
 {
-    return capture(sprintf('docker-compose ps | grep Up | grep %s | wc -l', $container)) === '1';
+    return capture(sprintf('docker compose ps | grep Up | grep %s | wc -l', $container)) === '1';
 }
 
 function docker_wait_for_healthy(null|string|Stringable $container, int $timeout = 60): bool
@@ -57,9 +57,10 @@ function docker_wait_for_healthy(null|string|Stringable $container, int $timeout
     }
     wait_for(
         callback: static fn(): bool => capture(
-                sprintf("docker-compose ps | grep '%s' | grep '(healthy)' | wc -l", $container)
+                sprintf("docker compose ps | grep '%s' | grep '(healthy)' | wc -l", $container)
             ) === "1",
-        timeout: $timeout
+        timeout: $timeout,
+        message: "Wait for container \"$container\" to be healthy"
     );
     return true;
 }
@@ -95,6 +96,7 @@ function docker_compose_up(
     docker_compose(
         command: [
             'up',
+            '-d',
             ...$options
         ],
         timeout: 0,
@@ -117,7 +119,7 @@ function docker_compose(
     }
 
     $context = context();
-    $docker_compose_files = $context['docker-compose-files'] ?? ['-f docker-compose.yml'];
+    $docker_compose_files = $context['docker-compose-files'] ?? ['-f', 'docker-compose.yml'];
 
     return run(
         command: [
