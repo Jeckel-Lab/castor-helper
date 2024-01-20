@@ -187,13 +187,14 @@ function docker_fingerprint(): string
     return $hasher->finish();
 }
 
-function compose_bash(string|\Stringable $container, string $shell = 'bash'): void
+function compose_bash(string|\Stringable $container, string $shell = 'bash', array $options = []): void
 {
     $command = docker_container_is_running($container) ? ['exec'] : ['run', '--rm'];
     pcntl_exec(
         capture('which docker'),
         [
             'compose',
+            ...$options,
             ...$command,
             (string) $container,
             $shell
