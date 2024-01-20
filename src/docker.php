@@ -142,20 +142,26 @@ function docker_compose_build(): void
     fingerprint_save(docker_fingerprint());
 }
 
-function docker_build(string $path, string $tag, array $buildArgs = []): void
+function docker_build(
+    string $path,
+    string $tag,
+    array $buildArgs = [],
+    array $options = []
+): void
 {
     io()->info(sprintf('Création de l\'image docker "%s"', $tag));
     run(
         command: [
             'docker',
             'build',
+            ...$options,
             ...array_map(
                 static fn(string $arg, string $value) => '--build-arg='. $arg. '='. $value,
                 array_keys($buildArgs),
                 array_values($buildArgs)
             ),
             '--tag=' . $tag,
-            $path
+            context()->currentDirectory . $path
         ],
         timeout: 0
     );
