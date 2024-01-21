@@ -200,8 +200,8 @@ function compose_bash(string|\Stringable $container, string $shell = 'bash', arr
         capture('which docker'),
         [
             'compose',
-            ...$options,
             ...$command,
+            ...$options,
             (string) $container,
             $shell
         ]
